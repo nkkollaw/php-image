@@ -1,13 +1,15 @@
 <?php
 /**
- * php-textimage — Text on transparent PNGs with PHP
+ * php-textoverlay— Text on transparent PNGs with PHP
  *
  * @author Forked from https://github.com/kus/php-image by Blake Kus
  * @copyright kus/php-image copyright © 2015 Blake Kus <blakekus@gmail.com>
  * @license MIT (http://www.opensource.org/licenses/mit-license.php)
  */
 
-class PHPImage {
+namespace nkkollaw;
+
+class TextOverlay {
 	/**
 	 * Canvas resource
 	 *
