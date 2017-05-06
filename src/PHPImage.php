@@ -1,42 +1,10 @@
 <?php
-
 /**
- * Wrapper for PHP's GD Library for easy image manipulation to resize, crop
- * and draw images on top of each other preserving transparency, writing text
- * with stroke and transparency and drawing shapes.
+ * php-textimage — Text on transparent PNGs with PHP
  *
- * @version 0.5
- * @author Blake Kus <blakekus@gmail.com>
- * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
- * @copyright 2015 Blake Kus
- *
- * CHANGELOG:
- * version 0.5 2015-01-02
- * ADD: textBox auto scale font to width and height requested by @rufinus https://github.com/kus/php-image/issues/3
- *
- * version 0.4 2014-02-27
- * ADD: Image support for image cloning (Thanks @chainat)
- * ADD: Support to use GD commands to manipulate image and then continue using library
- * UPDATE: Private to Protected so library is extendable
- * ADD: Rotate
- *
- * version 0.3 2014-02-12
- * ADD: Examples
- * ADD: Initialise image on class instantiation
- * ADD: Image resize with optional upscaling
- * ADD: Image batch resize
- * ADD: Image crop
- * ADD: Option to save as gif/jpg/png
- * ADD: Snapshot images
- * FIX: Error in `textBox` reported by elbaku https://github.com/kus/php-image/issues/1
- *
- * version 0.2 2013-05-23
- * Add support for remote images
- * Add error handling when reading/writing files
- * Add ability to draw text box and auto fit text and align text
- *
- * version 0.1 2013-04-15
- * Initial release
+ * @author Forked from https://github.com/kus/php-image by Blake Kus
+ * @copyright kus/php-image copyright © 2015 Blake Kus <blakekus@gmail.com>
+ * @license MIT (http://www.opensource.org/licenses/mit-license.php)
  */
 
 class PHPImage {
@@ -224,7 +192,6 @@ class PHPImage {
 		imagecopy($this->img, $this->img_copy, 0, 0, 0, 0, $this->width, $this->height);
 	}
 
-
 	/**
 	 * Get image height
 	 *
@@ -242,7 +209,6 @@ class PHPImage {
 	public function getWidth(){
 		return $this->width;
 	}
-	
 
 	/**
 	 * Get image resource (used when using a raw gd command)
