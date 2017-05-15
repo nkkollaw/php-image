@@ -350,9 +350,9 @@ class TextOverlay {
 	}
 
 	/**
-	 * Shows the resulting image and cleans up.
+	 * Prints the resulting image and cleans up.
 	 */
-	public function show() {
+	public function print() {
 		header('Content-type: image/png');
 		imagepng($this->img, null, $this->compression);
 		$this->cleanup();
@@ -369,11 +369,11 @@ class TextOverlay {
 	 * Save the image
 	 *
 	 * @param String $path
-	 * @param boolean $show
+	 * @param boolean $print
 	 * @param boolean $destroy
 	 * @return $this
 	 */
-	public function save($path, $show=false, $destroy=true) {
+	public function save($path, $print=false, $destroy=true) {
 		if (!is_writable(dirname($path))) {
 			if (!mkdir(dirname($path), $this->folderMode, true)) {
 				$this->handleError(dirname($path) . ' is not writable and failed to create directory structure!');
@@ -386,8 +386,8 @@ class TextOverlay {
 
 		imagepng($this->img, $path, $this->compression);
 
-		if ($show) {
-			$this->show();
+		if ($print) {
+			$this->print();
 
 			return;
 		}
@@ -410,11 +410,11 @@ class TextOverlay {
 	}
 
 	/**
-	 * Save the image and show it
+	 * Save the image and prints it
 	 *
 	 * @param string $path
 	 */
-	public function showAndSave($path) {
+	public function printAndSave($path) {
 		$this->save($path, true);
 	}
 
