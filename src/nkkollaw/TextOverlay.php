@@ -319,6 +319,10 @@ class TextOverlay {
 			'color' => $this->color,
 			'autofit' => true,
 
+			// dimensions
+			'width' => $this->width,
+			'height' => $this->height,
+
 			// appearance
 			'stroke_width' => $this->strokeWidth,
 			'stroke_color' => $this->strokeColor,
