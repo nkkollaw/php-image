@@ -124,7 +124,6 @@ class TextOverlay {
 	 * @return $this
 	 */
 	public function __construct($width, $height) {
-		//Check if GD extension is loaded
 		if (!extension_loaded('gd') && !extension_loaded('gd2')) {
 			$this->handleError('GD is not loaded');
 
@@ -291,100 +290,8 @@ class TextOverlay {
 		return $this;
 	}
 
-	// /**
-	//  * Draw an image from file
-	//  *
-	//  * Accepts x/y properties from CSS background-position (left, center, right, top, bottom, percentage and pixels)
-	//  *
-	//  * @param String $file
-	//  * @param String|integer $x
-	//  * @param String|integer $y
-	//  * @see http://www.php.net/manual/en/function.imagecopyresampled.php
-	//  * @see http://www.w3schools.com/cssref/pr_background-position.asp
-	//  * @return $this
-	//  */
-	// public function draw($file, $x='50%', $y='50%') {
-	// 	if ($info = $this->getImageInfo($file)) {
-	// 		$image = $info->resource;
-	// 		$width = $info->width;
-	// 		$height = $info->height;
-	// 		// Defaults if invalid values passed
-	// 		if (strpos($x, '%') === false && !is_numeric($x) && !in_array($x, array('left', 'center', 'right'))) {
-	// 			$x = '50%';
-	// 		}
-	// 		if (strpos($y, '%') === false && !is_numeric($y) && !in_array($y, array('top', 'center', 'bottom'))) {
-	// 			$y = '50%';
-	// 		}
-	//
-	// 		// If word passed, convert it to percentage
-	// 		switch($x) {
-	// 			case 'left':
-	// 				$x = '0%';
-	// 				break;
-	// 			case 'center':
-	// 				$x = '50%';
-	// 				break;
-	// 			case 'right':
-	// 				$x = '100%';
-	// 				break;
-	// 		}
-	// 		switch($y) {
-	// 			case 'top':
-	// 				$y = '0%';
-	// 				break;
-	// 			case 'center':
-	// 				$y = '50%';
-	// 				break;
-	// 			case 'bottom':
-	// 				$y = '100%';
-	// 				break;
-	// 		}
-	//
-	// 		// Work out offset
-	// 		if (strpos($x, '%') > -1) {
-	// 			$x = str_replace('%', '', $x);
-	// 			$x = ceil(($this->width - $width) * ($x / 100));
-	// 		}
-	// 		if (strpos($y, '%') > -1) {
-	// 			$y = str_replace('%', '', $y);
-	// 			$y = ceil(($this->height - $height) * ($y / 100));
-	// 		}
-	//
-	// 		// Draw image
-	// 		imagecopyresampled(
-	// 			$this->img,
-	// 			$image,
-	// 			$x,
-	// 			$y,
-	// 			0,
-	// 			0,
-	// 			$width,
-	// 			$height,
-	// 			$width,
-	// 			$height
-	// 		);
-	// 		imagedestroy($image);
-	// 		$this->afterUpdate();
-	// 		return $this;
-	// 	} else {
-	// 		$this->handleError($file . ' is not a valid image!');
-	// 	}
-	// }
-
 	/**
 	 * Draw text
-	 *
-	 * ### Options
-	 *
-	 * - integer $font_size
-	 * - integer $x
-	 * - integer $y
-	 * - integer $angle
-	 * - integer $stroke_width
-	 * - float $opacity
-	 * - array $color
-	 * - array $stroke_color
-	 * - String $font_file
 	 *
 	 * @param String $text
 	 * @param array $options
@@ -405,10 +312,6 @@ class TextOverlay {
 			'y' => 0,
 			'hoz_align' => $this->hozAlign,
 			'vert_align' => $this->vertAlign,
-
-			// dimensions
-			'width' => null,
-			'height' => null,
 
 			// typography
 			'font_file' => $this->fontFile,
@@ -434,8 +337,8 @@ class TextOverlay {
 			$this->handleError('No font file set!');
 		}
 
-		if (is_int($width) && $autofit) {
-			$font_size = $this->fitToWidth($font_size, $angle, $font_file, $text, $width);
+		if (is_int($this->width) && $autofit) {
+			$font_size = $this->fitToWidth($font_size, $angle, $font_file, $text, $this->width);
 		}
 
 		// Get Y offset as it 0 Y is the lower-left corner of the character
@@ -446,24 +349,24 @@ class TextOverlay {
 		$actualHeight = abs($testbox[1] - $testbox[7]);
 
 		// If text box align text
-		if (is_int($width) || is_int($height)) {
-			if (!is_int($width)) {
-				$width = $actualWidth;
+		if (is_int($this->width) || is_int($height)) {
+			if (!is_int($this->width)) {
+				$this->width = $actualWidth;
 			}
 			if (!is_int($height)) {
 				$height = $actualHeight;
 			}
 
 			if ($debug) {
-				$this->rectangle($x, $y, $width, $height, array(0, 255, 255), 0.5);
+				$this->rectangle($x, $y, $this->width, $height, array(0, 255, 255), 0.5);
 			}
 
 			switch($hoz_align) {
 				case 'center':
-					$offsetx += (($width - $actualWidth) / 2);
+					$offsetx += (($this->width - $actualWidth) / 2);
 					break;
 				case 'right':
-					$offsetx += ($width - $actualWidth);
+					$offsetx += ($this->width - $actualWidth);
 					break;
 			}
 
