@@ -26,11 +26,10 @@ class TextOverlay {
 
 	/**
 	 * PNG Compression level: from 0 (no compression) to 9.
-	 * JPEG Compression level: from 0 to 100 (no compression).
 	 *
 	 * @var integer
 	 */
-	protected $quality = 100;
+	protected $compression = 0;
 
 	/**
 	 * Global font file
@@ -110,13 +109,6 @@ class TextOverlay {
 	protected $height;
 
 	/**
-	 * Image type
-	 *
-	 * @var integer
-	 */
-	protected $imageType;
-
-	/**
 	 * Default folder mode to be used if folder structure needs to be created
 	 *
 	 * @var String
@@ -131,7 +123,7 @@ class TextOverlay {
 	 * @param integer $height (optional)
 	 * @return $this
 	 */
-	public function __construct($mixed=null, $height=null) {
+	public function __construct($width, $height) {
 		//Check if GD extension is loaded
 		if (!extension_loaded('gd') && !extension_loaded('gd2')) {
 			$this->handleError('GD is not loaded');
@@ -139,14 +131,14 @@ class TextOverlay {
 			return false;
 		}
 
-		if ($mixed !== null && $height !== null) {
-			$this->initialiseCanvas($mixed, $height);
-		} else if ($mixed !== null && is_string($mixed)) {
-			$image = $this->setDimensionsFromImage($mixed);
-			$image->draw($mixed);
-
-			return $image;
+		if (!is_int($width) || !is_int($height)) {
+			throw new \Exception('invalid dimensions');
 		}
+		if (!$width || !$height) {
+			throw new \Exception('dimensions not specified');
+		}
+
+		return $this->initialiseCanvas($width, $height);
 	}
 
 	/**
@@ -235,116 +227,116 @@ class TextOverlay {
 		return $this;
 	}
 
-	/**
-	 * Set image dimensions from an image source
-	 *
-	 * @param String $file
-	 * @return $this
-	 */
-	public function setDimensionsFromImage($file) {
-		if ($info = $this->getImageInfo($file, false)) {
-			$this->initialiseCanvas($info->width, $info->height);
+	// /**
+	//  * Set image dimensions from an image source
+	//  *
+	//  * @param String $file
+	//  * @return $this
+	//  */
+	// public function setDimensionsFromImage($file) {
+	// 	if ($info = $this->getImageInfo($file, false)) {
+	// 		$this->initialiseCanvas($info->width, $info->height);
+	//
+	// 		return $this;
+	// 	} else {
+	// 		$this->handleError($file . ' is not readable!');
+	// 	}
+	// }
 
-			return $this;
-		} else {
-			$this->handleError($file . ' is not readable!');
-		}
-	}
-
-	/**
-	 * Check if an image (remote or local) is a valid image and return type, width, height and image resource
-	 *
-	 * @param string $file
-	 * @param boolean $return_resource
-	 * @return \stdClass
-	 */
-	protected function getImageInfo($file, $return_resource=true) {
-		if ($file instanceof PHPIMage) {
-			$img = $file->img;
-			$image_type = $file->imageType;
-			$width = $file->width;
-			$height = $file->height;
-		} elseif (preg_match('#^https?://#i', $file)) {
-			$headers = get_headers($file, 1);
-
-			if (is_array($headers['Content-Type'])) {// Some servers return an array of content types, Facebook does this
-				$content_type = $headers['Content-Type'][0];
-			} else {
-				$content_type = $headers['Content-Type'];
-			}
-
-			if (preg_match('#^image/(jpe?g|png|gif)$#i', $content_type)) {
-				switch(true) {
-					case stripos($content_type, 'jpeg') !== false:
-					case stripos($content_type, 'jpg') !== false:
-						$img = imagecreatefromjpeg($file);
-						$image_type = IMAGETYPE_JPEG;
-						break;
-					case stripos($content_type, 'png') !== false:
-						$img = imagecreatefrompng($file);
-						$image_type = IMAGETYPE_PNG;
-						break;
-					case stripos($content_type, 'gif') !== false:
-						$img = imagecreatefromgif ($file);
-						$image_type = IMAGETYPE_GIF;
-						break;
-					default:
-						return false;
-						break;
-				}
-
-				$width = imagesx($img);
-				$height = imagesy($img);
-
-				if (!$return_resource) {
-					imagedestroy($img);
-				}
-			} else {
-				return false;
-			}
-		} elseif (is_readable($file)) {
-			list($width, $height, $image_type) = getimagesize($file);
-
-			switch($image_type) {
-				case IMAGETYPE_GIF:
-					if ($return_resource) {
-						$img = imagecreatefromgif ($file);
-					}
-					break;
-				case IMAGETYPE_JPEG:
-					if ($return_resource) {
-						$img = imagecreatefromjpeg($file);
-					}
-					break;
-				case IMAGETYPE_PNG:
-					if ($return_resource) {
-						$img = imagecreatefrompng($file);
-					}
-					break;
-				default:
-					return false;
-					break;
-			}
-		} else {
-			return false;
-		}
-
-		$info = new \stdClass();
-		$info->imageType = $image_type;
-		if ($this->imageType === null) {
-			// Assuming the first image you use is the output image type you want
-			$this->imageType = $image_type;
-		}
-
-		$info->width = $width;
-		$info->height = $height;
-
-		if ($return_resource) {
-			$info->resource = $img;
-		}
-
-		return $info;
-	}
+	// /**
+	//  * Check if an image (remote or local) is a valid image and return type, width, height and image resource
+	//  *
+	//  * @param string $file
+	//  * @param boolean $return_resource
+	//  * @return \stdClass
+	//  */
+	// protected function getImageInfo($file, $return_resource=true) {
+	// 	if ($file instanceof PHPIMage) {
+	// 		$img = $file->img;
+	// 		$image_type = $file->imageType;
+	// 		$width = $file->width;
+	// 		$height = $file->height;
+	// 	} elseif (preg_match('#^https?://#i', $file)) {
+	// 		$headers = get_headers($file, 1);
+	//
+	// 		if (is_array($headers['Content-Type'])) {// Some servers return an array of content types, Facebook does this
+	// 			$content_type = $headers['Content-Type'][0];
+	// 		} else {
+	// 			$content_type = $headers['Content-Type'];
+	// 		}
+	//
+	// 		if (preg_match('#^image/(jpe?g|png|gif)$#i', $content_type)) {
+	// 			switch(true) {
+	// 				case stripos($content_type, 'jpeg') !== false:
+	// 				case stripos($content_type, 'jpg') !== false:
+	// 					$img = imagecreatefromjpeg($file);
+	// 					$image_type = IMAGETYPE_JPEG;
+	// 					break;
+	// 				case stripos($content_type, 'png') !== false:
+	// 					$img = imagecreatefrompng($file);
+	// 					$image_type = IMAGETYPE_PNG;
+	// 					break;
+	// 				case stripos($content_type, 'gif') !== false:
+	// 					$img = imagecreatefromgif ($file);
+	// 					$image_type = IMAGETYPE_GIF;
+	// 					break;
+	// 				default:
+	// 					return false;
+	// 					break;
+	// 			}
+	//
+	// 			$width = imagesx($img);
+	// 			$height = imagesy($img);
+	//
+	// 			if (!$return_resource) {
+	// 				imagedestroy($img);
+	// 			}
+	// 		} else {
+	// 			return false;
+	// 		}
+	// 	} elseif (is_readable($file)) {
+	// 		list($width, $height, $image_type) = getimagesize($file);
+	//
+	// 		switch($image_type) {
+	// 			case IMAGETYPE_GIF:
+	// 				if ($return_resource) {
+	// 					$img = imagecreatefromgif ($file);
+	// 				}
+	// 				break;
+	// 			case IMAGETYPE_JPEG:
+	// 				if ($return_resource) {
+	// 					$img = imagecreatefromjpeg($file);
+	// 				}
+	// 				break;
+	// 			case IMAGETYPE_PNG:
+	// 				if ($return_resource) {
+	// 					$img = imagecreatefrompng($file);
+	// 				}
+	// 				break;
+	// 			default:
+	// 				return false;
+	// 				break;
+	// 		}
+	// 	} else {
+	// 		return false;
+	// 	}
+	//
+	// 	$info = new \stdClass();
+	// 	$info->imageType = $image_type;
+	// 	if ($this->imageType === null) {
+	// 		// Assuming the first image you use is the output image type you want
+	// 		$this->imageType = $image_type;
+	// 	}
+	//
+	// 	$info->width = $width;
+	// 	$info->height = $height;
+	//
+	// 	if ($return_resource) {
+	// 		$info->resource = $img;
+	// 	}
+	//
+	// 	return $info;
+	// }
 
 	/**
 	 * Handle errors
@@ -361,20 +353,8 @@ class TextOverlay {
 	 * Shows the resulting image and cleans up.
 	 */
 	public function show() {
-		switch($this->imageType) {
-			case IMAGETYPE_GIF:
-				header('Content-type: image/gif');
-				imagegif($this->img, null);
-				break;
-			case IMAGETYPE_PNG:
-				header('Content-type: image/png');
-				imagepng($this->img, null, $this->quality);
-				break;
-			default:
-				header('Content-type: image/jpeg');
-				imagejpeg($this->img, null, $this->quality);
-				break;
-		}
+		header('Content-type: image/png');
+		imagepng($this->img, null, $this->compression);
 		$this->cleanup();
 	}
 
@@ -400,21 +380,11 @@ class TextOverlay {
 			}
 		}
 
-		if (is_writable(dirname($path))) {
-			switch($this->imageType) {
-				case IMAGETYPE_GIF:
-					imagegif($this->img, $path);
-					break;
-				case IMAGETYPE_PNG:
-					imagepng($this->img, $path, $this->quality);
-					break;
-				default:
-					imagejpeg($this->img, $path, $this->quality);
-					break;
-			}
-		} else {
+		if (!is_writable(dirname($path))) {
 			$this->handleError(dirname($path) . ' is not writable!');
 		}
+
+		imagepng($this->img, $path, $this->compression);
 
 		if ($show) {
 			$this->show();
@@ -471,85 +441,85 @@ class TextOverlay {
 		return $this;
 	}
 
-	/**
-	 * Draw an image from file
-	 *
-	 * Accepts x/y properties from CSS background-position (left, center, right, top, bottom, percentage and pixels)
-	 *
-	 * @param String $file
-	 * @param String|integer $x
-	 * @param String|integer $y
-	 * @see http://www.php.net/manual/en/function.imagecopyresampled.php
-	 * @see http://www.w3schools.com/cssref/pr_background-position.asp
-	 * @return $this
-	 */
-	public function draw($file, $x='50%', $y='50%') {
-		if ($info = $this->getImageInfo($file)) {
-			$image = $info->resource;
-			$width = $info->width;
-			$height = $info->height;
-			// Defaults if invalid values passed
-			if (strpos($x, '%') === false && !is_numeric($x) && !in_array($x, array('left', 'center', 'right'))) {
-				$x = '50%';
-			}
-			if (strpos($y, '%') === false && !is_numeric($y) && !in_array($y, array('top', 'center', 'bottom'))) {
-				$y = '50%';
-			}
-
-			// If word passed, convert it to percentage
-			switch($x) {
-				case 'left':
-					$x = '0%';
-					break;
-				case 'center':
-					$x = '50%';
-					break;
-				case 'right':
-					$x = '100%';
-					break;
-			}
-			switch($y) {
-				case 'top':
-					$y = '0%';
-					break;
-				case 'center':
-					$y = '50%';
-					break;
-				case 'bottom':
-					$y = '100%';
-					break;
-			}
-
-			// Work out offset
-			if (strpos($x, '%') > -1) {
-				$x = str_replace('%', '', $x);
-				$x = ceil(($this->width - $width) * ($x / 100));
-			}
-			if (strpos($y, '%') > -1) {
-				$y = str_replace('%', '', $y);
-				$y = ceil(($this->height - $height) * ($y / 100));
-			}
-
-			// Draw image
-			imagecopyresampled(
-				$this->img,
-				$image,
-				$x,
-				$y,
-				0,
-				0,
-				$width,
-				$height,
-				$width,
-				$height
-			);
-			imagedestroy($image);
-			$this->afterUpdate();
-			return $this;
-		} else {
-			$this->handleError($file . ' is not a valid image!');
-		}
-	}
+	// /**
+	//  * Draw an image from file
+	//  *
+	//  * Accepts x/y properties from CSS background-position (left, center, right, top, bottom, percentage and pixels)
+	//  *
+	//  * @param String $file
+	//  * @param String|integer $x
+	//  * @param String|integer $y
+	//  * @see http://www.php.net/manual/en/function.imagecopyresampled.php
+	//  * @see http://www.w3schools.com/cssref/pr_background-position.asp
+	//  * @return $this
+	//  */
+	// public function draw($file, $x='50%', $y='50%') {
+	// 	if ($info = $this->getImageInfo($file)) {
+	// 		$image = $info->resource;
+	// 		$width = $info->width;
+	// 		$height = $info->height;
+	// 		// Defaults if invalid values passed
+	// 		if (strpos($x, '%') === false && !is_numeric($x) && !in_array($x, array('left', 'center', 'right'))) {
+	// 			$x = '50%';
+	// 		}
+	// 		if (strpos($y, '%') === false && !is_numeric($y) && !in_array($y, array('top', 'center', 'bottom'))) {
+	// 			$y = '50%';
+	// 		}
+	//
+	// 		// If word passed, convert it to percentage
+	// 		switch($x) {
+	// 			case 'left':
+	// 				$x = '0%';
+	// 				break;
+	// 			case 'center':
+	// 				$x = '50%';
+	// 				break;
+	// 			case 'right':
+	// 				$x = '100%';
+	// 				break;
+	// 		}
+	// 		switch($y) {
+	// 			case 'top':
+	// 				$y = '0%';
+	// 				break;
+	// 			case 'center':
+	// 				$y = '50%';
+	// 				break;
+	// 			case 'bottom':
+	// 				$y = '100%';
+	// 				break;
+	// 		}
+	//
+	// 		// Work out offset
+	// 		if (strpos($x, '%') > -1) {
+	// 			$x = str_replace('%', '', $x);
+	// 			$x = ceil(($this->width - $width) * ($x / 100));
+	// 		}
+	// 		if (strpos($y, '%') > -1) {
+	// 			$y = str_replace('%', '', $y);
+	// 			$y = ceil(($this->height - $height) * ($y / 100));
+	// 		}
+	//
+	// 		// Draw image
+	// 		imagecopyresampled(
+	// 			$this->img,
+	// 			$image,
+	// 			$x,
+	// 			$y,
+	// 			0,
+	// 			0,
+	// 			$width,
+	// 			$height,
+	// 			$width,
+	// 			$height
+	// 		);
+	// 		imagedestroy($image);
+	// 		$this->afterUpdate();
+	// 		return $this;
+	// 	} else {
+	// 		$this->handleError($file . ' is not a valid image!');
+	// 	}
+	// }
 
 	/**
 	 * Draw text
@@ -580,20 +550,25 @@ class TextOverlay {
 		}
 
 		$defaults = array(
-			'font_size' => $this->fontSize,
-			'text_color' => $this->textColor,
-			'opacity' => $this->textOpacity,
 			'x' => 0,
 			'y' => 0,
-			'width' => null,
-			'height' => null,
 			'hoz_align' => $this->hozAlign,
 			'vert_align' => $this->vertAlign,
-			'angle' => $this->textAngle,
+
+			'width' => null,
+			'height' => null,
+
+			'font_file' => $this->fontFile,
+			'font_size' => $this->fontSize,
+			'text_color' => $this->textColor,
+			'autofit' => true,
+
 			'stroke_width' => $this->strokeWidth,
 			'stroke_color' => $this->strokeColor,
-			'font_file' => $this->fontFile,
-			'autofit' => true,
+
+			'opacity' => $this->textOpacity,
+			'angle' => $this->textAngle,
+
 			'debug' => false
 		);
 
@@ -622,9 +597,11 @@ class TextOverlay {
 			if (!is_int($height)) {
 				$height = $actualHeight;
 			}
+
 			if ($debug) {
 				$this->rectangle($x, $y, $width, $height, array(0, 255, 255), 0.5);
 			}
+
 			switch($hoz_align) {
 				case 'center':
 					$offsetx += (($width - $actualWidth) / 2);
@@ -633,6 +610,7 @@ class TextOverlay {
 					$offsetx += ($width - $actualWidth);
 					break;
 			}
+
 			switch($vert_align) {
 				case 'center':
 					$offsety += (($height - $actualHeight) / 2);
