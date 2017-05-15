@@ -1,5 +1,5 @@
 {
-    "name": "nkkollaw/textoverlay",
+	"name": "nkkollaw/textoverlay",
 	"description": "Add text to a transparent PNG",
 	"keywords": ["php", "image", "text", "gd"],
 	"type": "library",
@@ -16,12 +16,12 @@
 			"homepage": "http://www.nbrogi.com"
 		}
 	],
-    "require": {
-        "php": ">=5.3.0"
-    },
-    "autoload": {
-        "files": [
-            "src/nkkollaw/TextOverlay.php"
-        ]
-    }
+	"require": {
+		"php": ">=5.3.0"
+	},
+	"autoload": {
+		"files": [
+			"src/nkkollaw/TextOverlay.php"
+		]
+	}
 }
