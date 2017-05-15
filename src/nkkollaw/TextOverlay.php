@@ -375,6 +375,7 @@ class TextOverlay {
 			}
 
 			switch ($vert_align) {
+				case 'middle':
 				case 'center':
 					$offsety += (($height - $actualHeight) / 2);
 					break;

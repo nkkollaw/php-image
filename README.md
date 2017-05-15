@@ -19,8 +19,8 @@ $myOverlay->text($text, array(
 	// position
 	'x' => 0,
 	'y' => 0,
-	'hoz_align' => 'center', // left|center|right
-	'vert_align' => 'center', // top|center|bottom
+	'hoz_align' => 'left', // left|center|right
+	'vert_align' => 'top', // top|middle|bottom
 	
 	// typography
 	'font_file' => '/path/to/font.ttf',
