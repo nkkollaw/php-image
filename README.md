@@ -22,10 +22,6 @@ $myOverlay->text($text, array(
 	'hoz_align' => 'center',
 	'vert_align' => 'center',
 	
-	// dimensions
-	'width' => 200,
-	'height' => 50,
-	
 	// typography
 	'font_file' => '/path/to/font.ttf',
 	'font_size' => 20,
