@@ -300,7 +300,7 @@ class TextOverlay {
 	 */
 	public function text($text, $options=array()) {
 		// Unset null values so they inherit defaults
-		foreach($options as $k => $v) {
+		foreach ($options as $k => $v) {
 			if ($options[$k] === null) {
 				unset($options[$k]);
 			}
@@ -365,7 +365,7 @@ class TextOverlay {
 				$this->rectangle($x, $y, $this->width, $height, array(0, 255, 255), 0.5);
 			}
 
-			switch($hoz_align) {
+			switch ($hoz_align) {
 				case 'center':
 					$offsetx += (($this->width - $actualWidth) / 2);
 					break;
@@ -374,7 +374,7 @@ class TextOverlay {
 					break;
 			}
 
-			switch($vert_align) {
+			switch ($vert_align) {
 				case 'center':
 					$offsety += (($height - $actualHeight) / 2);
 					break;
@@ -387,8 +387,8 @@ class TextOverlay {
 		// Draw stroke
 		if ($stroke_width > 0) {
 			$stroke_color = imagecolorallocatealpha($this->img, $stroke_color[0], $stroke_color[1], $stroke_color[2], (1 - $opacity) * 127);
-			for($sx = ($x-abs($stroke_width)); $sx <= ($x+abs($stroke_width)); $sx++) {
-				for($sy = ($y-abs($stroke_width)); $sy <= ($y+abs($stroke_width)); $sy++) {
+			for ($sx = ($x-abs($stroke_width)); $sx <= ($x+abs($stroke_width)); $sx++) {
+				for ($sy = ($y-abs($stroke_width)); $sy <= ($y+abs($stroke_width)); $sy++) {
 					imagettftext($this->img, $font_size, $angle, $sx + $offsetx, $sy + $offsety, $stroke_color, $font_file, $text);
 				}
 			}
