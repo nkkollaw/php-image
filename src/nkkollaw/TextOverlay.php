@@ -64,7 +64,7 @@ class TextOverlay {
 	 *
 	 * @var array
 	 */
-	protected $textColor = array(255, 255, 255);
+	protected $color = array(255, 255, 255);
 
 	/**
 	 * Global text opacity
@@ -187,156 +187,6 @@ class TextOverlay {
 		$this->initialiseCanvas($this->width, $this->height);
 		imagecopy($this->img, $this->imgCopy, 0, 0, 0, 0, $this->width, $this->height);
 	}
-
-	/**
-	 * Get image height
-	 *
-	 * @return int
-	 */
-	public function getHeight() {
-		return $this->height;
-	}
-
-	/**
-	 * Get image width
-	 *
-	 * @return int
-	 */
-	public function getWidth() {
-		return $this->width;
-	}
-
-	/**
-	 * Get image resource (used when using a raw gd command)
-	 *
-	 * @return resource
-	 */
-	public function getResource() {
-		return $this->img;
-	}
-
-	/**
-	 * Set image resource (after using a raw gd command)
-	 *
-	 * @param $resource
-	 * @return $this
-	 */
-	public function setResource($resource) {
-		$this->img = $resource;
-
-		return $this;
-	}
-
-	// /**
-	//  * Set image dimensions from an image source
-	//  *
-	//  * @param String $file
-	//  * @return $this
-	//  */
-	// public function setDimensionsFromImage($file) {
-	// 	if ($info = $this->getImageInfo($file, false)) {
-	// 		$this->initialiseCanvas($info->width, $info->height);
-	//
-	// 		return $this;
-	// 	} else {
-	// 		$this->handleError($file . ' is not readable!');
-	// 	}
-	// }
-
-	// /**
-	//  * Check if an image (remote or local) is a valid image and return type, width, height and image resource
-	//  *
-	//  * @param string $file
-	//  * @param boolean $return_resource
-	//  * @return \stdClass
-	//  */
-	// protected function getImageInfo($file, $return_resource=true) {
-	// 	if ($file instanceof PHPIMage) {
-	// 		$img = $file->img;
-	// 		$image_type = $file->imageType;
-	// 		$width = $file->width;
-	// 		$height = $file->height;
-	// 	} elseif (preg_match('#^https?://#i', $file)) {
-	// 		$headers = get_headers($file, 1);
-	//
-	// 		if (is_array($headers['Content-Type'])) {// Some servers return an array of content types, Facebook does this
-	// 			$content_type = $headers['Content-Type'][0];
-	// 		} else {
-	// 			$content_type = $headers['Content-Type'];
-	// 		}
-	//
-	// 		if (preg_match('#^image/(jpe?g|png|gif)$#i', $content_type)) {
-	// 			switch(true) {
-	// 				case stripos($content_type, 'jpeg') !== false:
-	// 				case stripos($content_type, 'jpg') !== false:
-	// 					$img = imagecreatefromjpeg($file);
-	// 					$image_type = IMAGETYPE_JPEG;
-	// 					break;
-	// 				case stripos($content_type, 'png') !== false:
-	// 					$img = imagecreatefrompng($file);
-	// 					$image_type = IMAGETYPE_PNG;
-	// 					break;
-	// 				case stripos($content_type, 'gif') !== false:
-	// 					$img = imagecreatefromgif ($file);
-	// 					$image_type = IMAGETYPE_GIF;
-	// 					break;
-	// 				default:
-	// 					return false;
-	// 					break;
-	// 			}
-	//
-	// 			$width = imagesx($img);
-	// 			$height = imagesy($img);
-	//
-	// 			if (!$return_resource) {
-	// 				imagedestroy($img);
-	// 			}
-	// 		} else {
-	// 			return false;
-	// 		}
-	// 	} elseif (is_readable($file)) {
-	// 		list($width, $height, $image_type) = getimagesize($file);
-	//
-	// 		switch($image_type) {
-	// 			case IMAGETYPE_GIF:
-	// 				if ($return_resource) {
-	// 					$img = imagecreatefromgif ($file);
-	// 				}
-	// 				break;
-	// 			case IMAGETYPE_JPEG:
-	// 				if ($return_resource) {
-	// 					$img = imagecreatefromjpeg($file);
-	// 				}
-	// 				break;
-	// 			case IMAGETYPE_PNG:
-	// 				if ($return_resource) {
-	// 					$img = imagecreatefrompng($file);
-	// 				}
-	// 				break;
-	// 			default:
-	// 				return false;
-	// 				break;
-	// 		}
-	// 	} else {
-	// 		return false;
-	// 	}
-	//
-	// 	$info = new \stdClass();
-	// 	$info->imageType = $image_type;
-	// 	if ($this->imageType === null) {
-	// 		// Assuming the first image you use is the output image type you want
-	// 		$this->imageType = $image_type;
-	// 	}
-	//
-	// 	$info->width = $width;
-	// 	$info->height = $height;
-	//
-	// 	if ($return_resource) {
-	// 		$info->resource = $img;
-	// 	}
-	//
-	// 	return $info;
-	// }
 
 	/**
 	 * Handle errors
@@ -532,7 +382,7 @@ class TextOverlay {
 	 * - integer $angle
 	 * - integer $stroke_width
 	 * - float $opacity
-	 * - array $text_color
+	 * - array $color
 	 * - array $stroke_color
 	 * - String $font_file
 	 *
@@ -550,25 +400,31 @@ class TextOverlay {
 		}
 
 		$defaults = array(
+			// position
 			'x' => 0,
 			'y' => 0,
 			'hoz_align' => $this->hozAlign,
 			'vert_align' => $this->vertAlign,
 
+			// dimensions
 			'width' => null,
 			'height' => null,
 
+			// typography
 			'font_file' => $this->fontFile,
 			'font_size' => $this->fontSize,
-			'text_color' => $this->textColor,
+			'color' => $this->color,
 			'autofit' => true,
 
+			// appearance
 			'stroke_width' => $this->strokeWidth,
 			'stroke_color' => $this->strokeColor,
 
+			// appearance (other)
 			'opacity' => $this->textOpacity,
 			'angle' => $this->textAngle,
 
+			// etc.
 			'debug' => false
 		);
 
@@ -632,7 +488,7 @@ class TextOverlay {
 		}
 
 		// Draw text
-		imagettftext($this->img, $font_size, $angle, $x + $offsetx, $y + $offsety, imagecolorallocatealpha($this->img, $text_color[0], $text_color[1], $text_color[2], (1 - $opacity) * 127), $font_file, $text);
+		imagettftext($this->img, $font_size, $angle, $x + $offsetx, $y + $offsety, imagecolorallocatealpha($this->img, $color[0], $color[1], $color[2], (1 - $opacity) * 127), $font_file, $text);
 		$this->afterUpdate();
 
 		return $this;
@@ -649,7 +505,7 @@ class TextOverlay {
 	 * @return integer
 	 */
 	protected function fitToWidth($font_size, $angle, $font_file, $text, $width) {
-		while($font_size > 0) {
+		while ($font_size > 0) {
 			$testbox = imagettfbbox($font_size, $angle, $font_file, $text);
 			$actualWidth = abs($testbox[6] - $testbox[4]);
 			if ($actualWidth <= $width) {
@@ -674,7 +530,7 @@ class TextOverlay {
 	 * @return integer
 	 */
 	protected function fitToBounds($font_size, $angle, $font_file, $text, $width, $height) {
-		while($font_size > 0) {
+		while ($font_size > 0) {
 			$wrapped = $this->wrap($text, $width, $font_size, $angle, $font_file);
 			$testbox = imagettfbbox($font_size, $angle, $font_file, $wrapped);
 			$actualHeight = abs($testbox[1] - $testbox[7]);
@@ -698,7 +554,7 @@ class TextOverlay {
 	public function textBox($text, $options=array()) {
 		$defaults = array(
 			'font_size' => $this->fontSize,
-			'text_color' => $this->textColor,
+			'color' => $this->color,
 			'opacity' => $this->textOpacity,
 			'x' => 0,
 			'y' => 0,
@@ -713,7 +569,7 @@ class TextOverlay {
 		if ($height) {
 			$font_size = $this->fitTobounds($font_size, $angle, $font_file, $text, $width, $height);
 		}
-		return $this->text($this->wrap($text, $width, $font_size, $angle, $font_file), array('font_size' => $font_size, 'x' => $x, 'y' => $y, 'angle' => $angle, 'stroke_width' => $stroke_width, 'opacity' => $opacity, 'text_color' => $text_color, 'stroke_color' => $stroke_color, 'font_file' => $font_file));
+		return $this->text($this->wrap($text, $width, $font_size, $angle, $font_file), array('font_size' => $font_size, 'x' => $x, 'y' => $y, 'angle' => $angle, 'stroke_width' => $stroke_width, 'opacity' => $opacity, 'color' => $color, 'stroke_color' => $stroke_color, 'font_file' => $font_file));
 	}
 
 	/**
