@@ -1,8 +1,7 @@
 {
-    "name": "kus/php-image",
-	"description": "Wrapper for PHP's GD Library for easy image manipulation",
+    "name": "nkkollaw/textoverlay",
+	"description": "Add text to a transparent PNG",
 	"keywords": ["php", "image", "text", "gd"],
-	"homepage": "http://blakek.us",
 	"type": "library",
 	"license": "MIT",
 	"authors": [
@@ -10,6 +9,11 @@
 			"name": "Blake Kus",
 			"email": "blakekus@gmail.com",
 			"homepage": "http://www.blakek.us"
+		},
+		{
+			"name": "Niccolo Brogi",
+			"email": "me@nbrogi.com",
+			"homepage": "http://www.nbrogi.com"
 		}
 	],
     "require": {
@@ -17,7 +21,7 @@
     },
     "autoload": {
         "files": [
-            "src/PHPImage.php"
+            "src/nkkollaw/TextOverlay.php"
         ]
     }
 }
