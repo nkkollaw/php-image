@@ -19,14 +19,14 @@ $myOverlay->text($text, array(
 	// position
 	'x' => 0,
 	'y' => 0,
-	'hoz_align' => 'center',
-	'vert_align' => 'center',
+	'hoz_align' => 'center', // left|center|right
+	'vert_align' => 'center', // top|center|bottom
 	
 	// typography
 	'font_file' => '/path/to/font.ttf',
 	'font_size' => 20,
 	'color' => array(0, 0, 0), // color in RGB format
-	'autofit' => false, // not tested
+	'autofit' => true, // shrink text to fit if wider than box
 	
 	// appearance
 	'stroke_width' => 3,
