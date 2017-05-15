@@ -30,7 +30,7 @@ class TextOverlay {
 	 *
 	 * @var integer
 	 */
-	protected $quality = 90;
+	protected $quality = 100;
 
 	/**
 	 * Global font file
